@@ -1,0 +1,906 @@
+import discord
+import os
+import datetime
+import random
+
+intents = discord.Intents.all()
+client = discord.Client(intents=intents)
+
+BOT_CHECK_COMMAND = '!확인'
+BOT_CHANGE_NICKNAME_COMMAND = '!닉'
+BOT_FIND_KEYWORD_COMMAND = '!'
+BOT_FIND_KEYWORD_LIST_COMMAND = '!?'
+BOT_REMEMBER_KEYWORD_COMMAND = '!+'
+BOT_REMOVE_KEYWORD_COMMAND = '!-'
+
+BOT_CONFIG_NICK_COMMAND = '#닉'
+BOT_CONFIG_FIND_COMMAND = '#!'
+
+BOT_EVENT_COMMAND = '!일정'
+BOT_CHECK_FUNCTION = '!명령어'
+
+BOT_EQUIP_COMMAND = '!장비'
+BOT_CLEAR_COMMAND = '!재료'
+
+BOT_DUNGEON_GOLD_COMMAND = '!골드'
+BOT_AUCTION_COMMAND = '!경매'
+
+
+BOT_LAST_VOICE_DATE_DIRECTORY = os.getcwd() + '/Last_Contact_Date'
+BOT_KEYWORD_DIRECTORY = os.getcwd() + '/keywords'
+BOT_CONFIG_DIRECTORY = os.getcwd() + '/config'
+
+
+# 봇 시작 시 출력 메세지
+@client.event
+async def on_ready():
+    print('------------------------------')
+    print('Name: ' + client.user.name)
+    print('ID: ' + str(client.user.id))
+    print(str(datetime.datetime.now()))
+    print('------------------------------')
+
+    await client.change_presence(activity=discord.Game(name="!명령어"))
+
+
+# 유저 보이스 채널 접속 이벤트
+@client.event
+async def on_voice_state_update(member, before, after):
+    for guild in client.guilds:
+        await checkdir(guild)
+
+        for channel_check in guild.channels:
+            if after.channel == channel_check or before.channel == channel_check:
+
+                if member.id == "547905866255433758" or member.id == "159985870458322944" or member.id == "479108435984515072":
+                    pass
+
+                else:
+                    with open(BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(guild.id) + '/' + str(member.id) + '.txt', 'w') as date:
+                        connect_time = datetime.datetime.now()
+                        date.write(str(connect_time.strftime("%Y-%m-%d %H:%M.%S")))
+
+
+                #server = channel.get_server("760314606265565265")
+
+                # 보이스 채널 접속시 누가 접속했는지 출력
+                main_ch_id = 834386773827518494
+                split_name = member.display_name.split("/")
+                string_name = str(split_name[0])
+                channel = client.get_channel(763283911412285440)
+
+                hello_word = [' 음성채널에 두두둥장!', ' 이 몸, 등장!', ' 님이 입장하셨습니다.', ' 와따!']
+                bye_word = [' 퇴근!', ' 행복을 찾아 떠납니다~', ' 님이 나가셨습니다.', ' 가따!' ]
+
+                hello_dj = [' 오늘의 DJ 등장!', ' 여러분의 분위기를 띄워줄 DJ 등장!', ' 등장! 오늘의 클럽은 여기!']
+                bye_dj = [' DJ 파업!', ' DJ는 떠납니다..', ' DJ 퇴장']
+
+                # 아무것도 없을 때 메인 채널로 올라왔을 때 출력
+                if before.channel is None and after.channel is not None:
+                    if after.channel.id == main_ch_id:
+                        if member.id == "547905866255433758" or member.id == "159985870458322944":
+                            em = discord.Embed(title=string_name + random.choice(hello_dj), description="",
+                                               colour=0x555555)
+                            await channel.send(embed=em)
+                            break
+
+                        elif member.id == "479108435984515072":
+                            pass
+
+                        else:
+                            em = discord.Embed(title=string_name + random.choice(hello_word), description="",
+                                               colour=0x555555)
+
+                            await channel.send(embed=em)
+                            break
+
+                # 무인도 채널 id = 861595853882261555
+
+                # 기존 채널에서 옮겨왔을 때 출력
+                elif before.channel is not None and after.channel is not None:
+                    if after.channel.id == main_ch_id:
+                        if member.id == "547905866255433758" or member.id == "159985870458322944":
+                            em = discord.Embed(title=string_name + random.choice(hello_dj), description="",
+                                               colour=0x555555)
+                            await channel.send(embed=em)
+                            break
+
+                        elif member.id == "479108435984515072":
+                            pass
+
+
+
+#                        elif before.self_mute == False and after.self_mute == True or before.self_mute == True\
+#                                and after.self_mute == False or before.self_stream == True and after.self_stream == False\
+#                                or before.self_stream == False and after.self_stream == True\
+#                                or before.self_stream == True and after.self_stream == False\
+#                                or before.self_video == False and after.self_video == True\
+#                                or before.self_video == True and after.self_video == False\
+#                                or before.suppress == True and after.suppress == False\
+#                                or before.suppress == False and after.suppress == True\
+#                                or before.mute == True and after.mute == False\
+#                                or before.mute == False and after.mute == True\
+#                                or before.afk == False and after.afk == True\
+#                                or before.afk == True and after.afk == False\
+#                                or before.deaf == False and after.deaf == True\
+#                                or before.deaf == True and after.deaf == False\
+#                                or before.self_deaf == False and after.self_deaf == True\
+#                                or before.self_deaf == True and after.self_deaf == False:
+#                            pass
+
+                        elif before.channel.id == after.channel.id:
+                            pass
+
+                        elif before.requested_to_speak_at == False and after.requested_to_speak_at == True:
+                            em = discord.Embed(title=string_name + " 에게 발언권을 달라!", description="",
+                                               colour=0x555555)
+                            await channel.send(embed=em)
+                            break
+
+                        elif before.channel.id == 861595853882261555 and after.channel.id == main_ch_id:
+                            em = discord.Embed(title=string_name + " 무인도에서 윌슨을 찾아와따!", description="",
+                                               colour=0x555555)
+
+                            await channel.send(embed=em)
+                            break
+
+                        elif before.suppress == False and after.suppress == True\
+                                and before.channel.id == main_ch_id and after.channel.id == 861595853882261555:
+                            em = discord.Embed(title=string_name + " 무인도에서 표류 중!", description="",
+                                               colour=0x555555)
+
+                            await channel.send(embed=em)
+                            break
+
+                        else:
+                            em = discord.Embed(title=string_name + " 음성채널로 올라왔어영!", description="",
+                                               colour=0x555555)
+
+                            await channel.send(embed=em)
+                            break
+
+                elif before.channel.id == 834386773827518494 and after.channel is None:
+                    if member.id == "547905866255433758" or member.id == "159985870458322944":
+                        em = discord.Embed(title=string_name + random.choice(bye_dj), description="",
+                                           colour=0x555555)
+                        await channel.send(embed=em)
+                        break
+
+                    elif member.id == "479108435984515072":
+                        pass
+
+                    else:
+                        em = discord.Embed(title=string_name + random.choice(bye_word), description="",
+                                           colour=0x555555)
+                        await channel.send(embed=em)
+                        break
+
+
+# 메세지 보낼 때 이벤트
+@client.event
+async def on_message(message):
+    if message.guild:
+
+        if not message.author == client.user:
+
+            # 채널 관리 권한이 있을 경우
+            if message.author.guild_permissions.manage_channels:
+                if message.content.startswith(BOT_CHECK_COMMAND + ' '):
+                    try:
+                        userid = ''.join(check for check in message.content.replace(BOT_CHECK_COMMAND + ' ', '', 1) if
+                                         check in '0123456789')
+                        await checkdir(message.guild)
+
+                        if os.path.exists(BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                                userid) + '.txt'):
+
+                            for filename in os.listdir(BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(message.guild.id)):
+
+                                if str(userid) + '.txt' == filename:
+                                    with open(BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(
+                                            message.guild.id) + '/' + filename, 'r') as date:
+                                        em = discord.Embed(title='보이스 채널 마지막 접속 날짜', description=date.read(),
+                                                           colour=0x555555)
+                                        await message.channel.send(embed=em)
+                    except:
+                        await err('Date1', message.guild)
+
+                if message.content == BOT_CHECK_COMMAND:
+                    try:
+
+                        await checkdir(message.guild)
+
+                        date_list = '\n'
+                        for member in message.guild.members:
+                            split_name = member.display_name.split("/")
+                            string_name = str(split_name[0])
+
+                            if not member == client.user:
+
+                                ##bot id : Hydra, MEE6
+                                if member.id == "547905866255433758" and member.id == "159985870458322944" and member.id == "479108435984515072":
+                                    pass
+                                ##
+                                elif os.path.exists(
+                                        BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                                            member.id) + '.txt'):
+                                    for filename in os.listdir(
+                                            BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(message.guild.id)):
+
+                                        if str(member.id) + '.txt' == filename:
+                                            with open(BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(
+                                                    message.guild.id) + '/' + filename, 'r') as date:
+                                                date_list = date_list + string_name + ' ' + date.read() + '\n'
+
+                        em = discord.Embed(title='보이스 채널 마지막 접속 날짜', description=date_list, colour=0x555555)
+                        await message.channel.send(embed=em)
+
+                    except:
+                        await err('Date2', message.guild)
+
+                # 정보 기억
+                if message.content.startswith(BOT_REMEMBER_KEYWORD_COMMAND + ' '):
+                    try:
+                        await checkdir(message.guild)
+                        chat = message.content.split(' ')
+                        with open(BOT_KEYWORD_DIRECTORY + '/' + str(message.guild.id) + '/' + chat[1] + '.txt',
+                                  'w') as keyword:
+                            keyword.write(
+                                message.content.replace(BOT_REMEMBER_KEYWORD_COMMAND + ' ' + chat[1] + ' ', '', 1))
+                        em = discord.Embed(title=chat[1] + " 정보 입력.", description="", colour=0x555555)
+                        await message.channel.send(embed=em)
+                    except:
+                        await err('remem', message.guild)
+
+                # 정보 삭제
+                if message.content.startswith(BOT_REMOVE_KEYWORD_COMMAND + ' '):
+                    try:
+                        await checkdir(message.guild)
+                        for filename in os.listdir(BOT_KEYWORD_DIRECTORY + '/' + str(message.guild.id)):
+                            if message.content.replace(BOT_REMOVE_KEYWORD_COMMAND + ' ', '', 1) + '.txt' == filename:
+                                os.remove(BOT_KEYWORD_DIRECTORY + '/' + str(message.guild.id) + '/' + filename)
+                                em = discord.Embed(
+                                    title=message.content.replace(BOT_REMOVE_KEYWORD_COMMAND + ' ', '', 1) + " 정보 삭제.",
+                                    description="", colour=0x555555)
+                                await message.channel.send(embed=em)
+                    except:
+                        await err('delfind', message.guild)
+
+                # 정보 ON/OFF
+                if message.content == BOT_CONFIG_FIND_COMMAND:
+                    try:
+                        await checkdir(message.guild)
+                        await conf(message.guild, message.channel, 'find')
+                    except:
+                        await err('conffind', message.guild)
+
+                # 닉 ON/OFF
+                if message.content == BOT_CONFIG_NICK_COMMAND:
+                    try:
+                        await checkdir(message.guild)
+                        await conf(message.guild, message.channel, 'nick')
+                    except:
+                        await err('confnick', message.guild)
+
+            # 모든 유저 명령어
+
+            # 닉네임 변경
+            if message.content.startswith(BOT_CHANGE_NICKNAME_COMMAND + ' '):
+                try:
+                    await checkdir(message.guild)
+                    if os.path.exists(BOT_CONFIG_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                            message.channel.id) + '/' + 'nick.txt'):
+                        with open(BOT_CONFIG_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                                message.channel.id) + '/' + 'nick.txt', 'r') as value:
+                            if value.read() == '1':
+                                await message.author.edit(
+                                    nick=message.content.replace(BOT_CHANGE_NICKNAME_COMMAND + ' ', '', 1))
+                except:
+                    await err('Nick', message.guild)
+
+            # 정보 검색 목록
+            if message.content == BOT_FIND_KEYWORD_LIST_COMMAND:
+                try:
+                    await checkdir(message.guild)
+                    if os.path.exists(BOT_CONFIG_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                            message.channel.id) + '/' + 'find.txt'):
+                        with open(BOT_CONFIG_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                                message.channel.id) + '/' + 'find.txt', 'r') as find_value:
+                            if find_value.read() == '1':
+                                k_list = ''
+                                for filename in os.listdir(BOT_KEYWORD_DIRECTORY + '/' + str(message.guild.id)):
+                                    if filename.startswith('#'):
+                                        k_list = k_list + ' ' + os.path.splitext(filename)[0].replace('#', '', 1)
+                                    else:
+                                        k_list = k_list + ' ' + os.path.splitext(filename)[0]
+                                em = discord.Embed(title='! 목록', description=k_list, colour=0x555555)
+                                await message.author.send(embed=em)
+                except:
+                    await err('find', message.guild)
+
+            # 정보 검색
+            if message.content.startswith(BOT_FIND_KEYWORD_COMMAND + ' '):
+                try:
+                    await checkdir(message.guild)
+                    if os.path.exists(BOT_CONFIG_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                            message.channel.id) + '/' + 'find.txt'):
+                        with open(BOT_CONFIG_DIRECTORY + '/' + str(message.guild.id) + '/' + str(
+                                message.channel.id) + '/' + 'find.txt', 'r') as find_value:
+                            if find_value.read() == '1':
+                                chat = message.content.split(' ')
+                                for filename in os.listdir(BOT_KEYWORD_DIRECTORY + '/' + str(message.guild.id)):
+                                    if chat[1] + '.txt' == filename:
+                                        with open(BOT_KEYWORD_DIRECTORY + '/' + str(message.guild.id) + '/' + filename,
+                                                  'r') as keyword:
+                                            em = discord.Embed(title=chat[1], description=keyword.read(),
+                                                               colour=0x555555)
+                                            await message.channel.send(embed=em)
+                                    if '#' + chat[1] + '.txt' == filename:
+                                        with open(BOT_KEYWORD_DIRECTORY + '/' + str(message.guild.id) + '/' + filename,
+                                                  'r') as keyword:
+                                            em = discord.Embed(title=chat[1], description=keyword.read(),
+                                                               colour=0x555555)
+                                            if message.guild.icon_url != '':
+                                                em.set_footer(text='By. ' + message.guild.name,
+                                                              icon_url=message.guild.icon_url)
+                                            else:
+                                                em.set_footer(text='By. ' + message.guild.name)
+                                            await message.author.send(embed=em)
+                except:
+                    await err('findkeyword', message.guild)
+
+            # 명령어 소개
+            if message.content.startswith(BOT_CHECK_FUNCTION):
+                em = discord.Embed(title="명령어", description="", colour=0xfb00ff)
+                em.add_field(name="!명령어 - 명령어 소개", value="!확인 - 최종 음성 채팅방 접속 시간 확인 (임원만 가능)"
+                                                         "\n!일정 - 오늘의 일정 소개 (모험 섬 및 항해 제외)"
+                                                         "\n!골드 - 주간 던전 골드 소개"
+                                                         "\n!경매 0000 - 경매 입찰가 계산"
+                                                         "\n!재료 - 레이드별 클리어 재료 보상"
+                                                         "\n!장비 - 장비별 필요 재료 정보", inline=False)
+                em.set_footer(text="봇에 대한 문의는 [지소]에게 말씀해주세요!")
+
+                await message.channel.send(embed=em)
+
+            # 일정 출력
+            if message.content.startswith(BOT_EVENT_COMMAND):
+
+
+                time_now = datetime.datetime.now()
+                #time_week = time_now.strftime("%W")
+                time_day = time_now.strftime("%A")
+                time_hour = time_now.strftime("%H:%M") #format: 00~24:00
+
+                #print(time_Week)
+                #print(time_day)
+                #print(time_hour)
+
+                #em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0xfc0303)
+                #await message.channel.send(embed=em)
+
+                if time_day == "Monday":
+                    if "00:00" <= time_hour <= "05:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="월요일 일정 - 필드보스: 오전 12시 ~ 오전 5시 (매 정각)"
+                                          "\n모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="모든 필드보스 등장!",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "05:01" <= time_hour <= "23:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="월요일 일정 - 모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="일렁이는 질병군단 - 슈샤이어, 얼음나비 절벽"
+                                                                             "\n일렁이는 질병군단 - 욘, 미완의 정원"
+                                                                             "\n일렁이는 어둠군단 - 페이튼, 울부짖는 늪지대"
+                                                                             "\n일렁이는 몽환군단 - 로헨델, 엘조윈의 그늘"
+                                                                             "\n일렁이는 광기군단 - 파푸니카, 별모래 해변"
+                                                                             "\n일렁이는 악마군단 - 베른 남부, 칸다리아 영지",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "23:01" <= time_hour <= "23:59":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="월요일 일정 - 카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="일렁이는 질병군단 - 슈샤이어, 얼음나비 절벽"
+                                                                             "\n일렁이는 질병군단 - 욘, 미완의 정원"
+                                                                             "\n일렁이는 어둠군단 - 페이튼, 울부짖는 늪지대"
+                                                                             "\n일렁이는 몽환군단 - 로헨델, 엘조윈의 그늘"
+                                                                             "\n일렁이는 광기군단 - 파푸니카, 별모래 해변"
+                                                                             "\n일렁이는 악마군단 - 베른 남부, 칸다리아 영지",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+
+                    else:
+
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="월요일 일정이 끝났어요!", value="다음 일정은 오는 새벽 1시부터 카오스 게이트가 있어요!", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                elif time_day == "Tuesday":
+
+                    if "00:00" <= time_hour <= "05:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="화요일 일정 - 필드보스: 오전 11시 ~ 오후 11시"
+                                          "\n모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n유령선: 오전 11시 ~ 24시 (매 정각)"
+                                          "\n카오스 게이트: 오전 1시 ~ 오전 5시 (매 정각)", value="일렁이는 질병군단 - 슈샤이어, 얼음나비 절벽"
+                                                                             "\n일렁이는 질병군단 - 욘, 미완의 정원"
+                                                                             "\n일렁이는 어둠군단 - 페이튼, 울부짖는 늪지대"
+                                                                             "\n일렁이는 몽환군단 - 로헨델, 엘조윈의 그늘"
+                                                                             "\n일렁이는 광기군단 - 파푸니카, 별모래 해변"
+                                                                             "\n일렁이는 악마군단 - 베른 남부, 칸다리아 영지", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "05:01" <= time_hour <= "23:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="화요일 일정 - 필드보스: 오전 11시 ~ 오후 11시"
+                                          "\n모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n유령선: 오전 11시 ~ 24시 (매 정각)", value="-",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "23:01" <= time_hour <= "23:59":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="화요일 일정 - 필드보스: 오전 11시 ~ 오후 11시"
+                                          "\n유령선: 오전 11시 ~ 24시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+
+                    else:
+
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="화요일 일정이 모두 끝났어요!", value="다음 일정은 오는 12시부터 필드보스(1 ~ 5시), "
+                                                                    "\n유령선이 있어요!(1 ~ 5시)", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                elif time_day == "Wednesday":
+                    if "00:00" <= time_hour <= "05:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="수요일 일정 - 필드보스: 오전 12시 ~ 오전 5시 (매 정각)"
+                                          "\n유령선: 오전 1시 ~ 오전 5시 (매 정각)"
+                                          "\n모험 섬: 11시, 13시, 19시, 21시, 23시", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "05:01" <= time_hour <= "23:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="수요일 일정 - 모험 섬: 11시, 13시, 19시, 21시, 23시", value="-",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    else:
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="수요일 일정이 모두 끝났어요!", value="다음 일정은 내일 오전 11시부터 있어요!", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                elif time_day == "Thursday":
+
+                    if "00:00" <= time_hour <= "11:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="목요일 일정 - 모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n유령선: 오전 11시 ~ 24시 (매 정각)"
+                                          "\n카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+
+                    elif "11:01" <= time_hour <= "23:00":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="목요일 일정 - 모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n유령선: 오전 11시 ~ 24시 (매 정각)"
+                                          "\n카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "23:01" <= time_hour <= "23:59":
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="목요일 일정 - 유령선: 오전 11시 ~ 24시 (매 정각)"
+                                          "\n카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+
+                    else:
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="목요일 일정이 모두 끝났어요!", value="다음 일정은 새벽 1시 ~ 5시에 카오스 게이트가 있어요!", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                elif time_day == "Friday":
+                    if "00:00" <= time_hour <= "05:00":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="금요일 일정 - 유령선: 오전 0시 ~ 5시 (매 정각)"
+                                          "\n카오스게이트: 오전 1시 ~ 5시 (매 정각)"
+                                          "\n모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n필드보스 - 오전 11시 ~ 오후 11시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+
+                    elif "05:01" <= time_hour <= "23:00":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="금요일 일정 - 모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                          "\n필드보스 - 오전 11시 ~ 오후 11시 (매 정각)"
+                                          , value="모든 필드보스",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+
+                    else:
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="금요일 일정이 모두 끝났어요!", value="다음 일정은 오는 12시부터 5시까지 필드보스가 있어요!", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                elif time_day == "Saturday":
+
+                    if "00:00" <= time_hour <= "05:00":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="토요일 일정 - 필드보스: 오전 12시 ~ 오전 5시 (매 정각)"
+                                          "\n카오스 게이트: 오전 11시 ~ 24시 (매 정각)"
+                                          "\n모험섬: 9시, 11시, 13시 (1 타임)"
+                                          "\n모험섬: 19시, 21시, 23시 (2 타임)"
+                                          "\n유령선: 11시 ~ 24시 (매 정각)", value="모든 필드보스",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "05:01" <= time_hour <= "23:00":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="토요일 일정 - 모험섬: 9시, 11시, 13시 (1 타임)"
+                                          "\n카오스 게이트: 오전 11시 ~ 24시 (매 정각)"
+                                          "\n모험섬: 19시, 21시, 23시 (2 타임)"
+                                          "\n유령선: 11시 ~ 24시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                          "\n그림자를 헤메는 유령선 - 페이튼 옆"
+                                          "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                          "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                          "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "23:01" <= time_hour <= "23:59":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="카오스 게이트: 오전 11시 ~ 24시 (매 정각)"
+                                          "\n토요일 일정 - 유령선: 11시 ~ 24시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤메는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+
+                    else:
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="토요일 일정이 모두 끝났어요!", value="다음 일정은 새벽1시부터 5시까지 유령선이 있어요!", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                elif time_day == "Sunday":
+
+                    if "00:00" <= time_hour <= "05:00":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="일요일 일정 - 유령선: 새벽 1시 ~ 5시 (매 정각)"
+                                          "\n카오스 게이트: 오전 1시 ~ 24시 (매 정각)"
+                                          "\n모험섬: 9시, 11시, 13시 (1 타임)"
+                                          "\n모험섬: 19시, 21시, 23시 (2 타임)"
+                                          "\n필드 보스: 오전 11시 ~ 오후 11시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤메는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "05:01" <= time_hour <= "23:00":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="일요일 일정 - 모험섬: 9시, 11시, 13시 (1 타임)"
+                                          "\n카오스 게이트: 오전 1시 ~ 24시 (매 정각)"
+                                          "\n모험섬: 19시, 21시, 23시 (2 타임)"
+                                          "\n필드 보스: 오전 11시 ~ 오후 11시 (매 정각)", value="모든 필드보스",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    elif "23:01" <= time_hour <= "23:59":
+                        em = discord.Embed(title="현재 시간: " + time_hour, description="", colour=0x555555)
+                        em.add_field(name="카오스 게이트: 오전 1시 ~ 24시 (매 정각)"
+                                          "\n필드 보스: 오전 11시 ~ 오후 11시 (매 정각)", value="모든 필드보스",
+                                     inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                    else:
+                        em = discord.Embed(title="지금 시간: " + time_hour, description="", colour=0x007bbf)
+                        em.add_field(name="일요일 일정이 모두 끝났어요!", value="다음 일정은 새벽 12시부터 필드보스가 있어요!", inline=False)
+                        em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                           "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                        await message.channel.send(embed=em)
+
+                else:
+                    pass
+            #요일 별 일정 출력
+            if message.content.startswith("!월요일"):
+                time_now = datetime.datetime.now()
+                time_day = time_now.strftime("%A")
+                time_hour = time_now.strftime("%H:%M")  # format: 00~24:00
+
+
+                em = discord.Embed(title="월요일 일정", description="", colour=0x007bbf)
+                em.add_field(name="필드보스: 오전 12시 ~ 오전 5시 (매 정각)"
+                                  "\n모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                  "\n카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="모든 필드보스 등장!",
+                             inline=False)
+                em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                   "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            if message.content.startswith("!화요일"):
+                em = discord.Embed(title="화요일 일정", description="", colour=0x007bbf)
+                em.add_field(name="필드보스: 오전 11시 ~ 오후 11시"
+                                  "\n모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                  "\n유령선: 오전 11시 ~ 24시 (매 정각)"
+                                  "\n카오스 게이트: 오전 1시 ~ 오전 5시 (매 정각)", value="일렁이는 질병군단 - 슈샤이어, 얼음나비 절벽"
+                                                                           "\n일렁이는 질병군단 - 욘, 미완의 정원"
+                                                                           "\n일렁이는 어둠군단 - 페이튼, 울부짖는 늪지대"
+                                                                           "\n일렁이는 몽환군단 - 로헨델, 엘조윈의 그늘"
+                                                                           "\n일렁이는 광기군단 - 파푸니카, 별모래 해변"
+                                                                           "\n일렁이는 악마군단 - 베른 남부, 칸다리아 영지", inline=False)
+                em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                   "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            if message.content.startswith("!수요일"):
+                em = discord.Embed(title="수요일 일정", description="", colour=0x007bbf)
+                em.add_field(name="필드보스: 오전 12시 ~ 오전 5시 (매 정각)"
+                                  "\n유령선: 오전 1시 ~ 오전 5시 (매 정각)"
+                                  "\n모험 섬: 11시, 13시, 19시, 21시, 23시", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)", inline=False)
+                em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                   "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            if message.content.startswith("!목요일"):
+                em = discord.Embed(title="목요일 일정", description="", colour=0x007bbf)
+                em.add_field(name="모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                  "\n유령선: 오전 11시 ~ 24시 (매 정각)"
+                                  "\n카오스 게이트: 오전 11 ~ 24시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤매는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)",
+                             inline=False)
+                em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                   "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            if message.content.startswith("!금요일"):
+                em = discord.Embed(title="금요일 일정", description="", colour=0x555555)
+                em.add_field(name="카오스게이트: 오전 1시 ~ 5시 (매 정각)"
+                                  "\n모험 섬: 11시, 13시, 19시, 21시, 23시"
+                                  "\n유령선: 오전 0시 ~ 5시 (매 정각)"
+                                  "\n필드보스 - 오전 11시 ~ 오후 11시 (매 정각)", value="일렁이는 질병군단 - 슈샤이어, 얼음나비 절벽"
+                                                                           "\n일렁이는 질병군단 - 욘, 미완의 정원"
+                                                                           "\n일렁이는 어둠군단 - 페이튼, 울부짖는 늪지대"
+                                                                           "\n일렁이는 몽환군단 - 로헨델, 엘조윈의 그늘"
+                                                                           "\n일렁이는 광기군단 - 파푸니카, 별모래 해변"
+                                                                           "\n일렁이는 악마군단 - 베른 남부, 칸다리아 영지", inline=False)
+                em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                   "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            if message.content.startswith("!토요일"):
+                em = discord.Embed(title="토요일 일정", description="", colour=0x555555)
+                em.add_field(name="필드보스: 오전 12시 ~ 오전 5시 (매 정각)"
+                                  "\n카오스 게이트: 오전 11시 ~ 24시 (매 정각)"
+                                  "\n모험섬: 9시, 11시, 13시 (1 타임)"
+                                  "\n모험섬: 19시, 21시, 23시 (2 타임)"
+                                  "\n유령선: 11시 ~ 24시 (매 정각)", value="모든 필드보스",
+                             inline=False)
+                em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                   "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            if message.content.startswith("!일요일"):
+                em = discord.Embed(title="일요일 일정", description="", colour=0x555555)
+                em.add_field(name="유령선: 새벽 1시 ~ 5시 (매 정각)"
+                                  "\n카오스 게이트: 오전 1시 ~ 24시 (매 정각)"
+                                  "\n모험섬: 9시, 11시, 13시 (1 타임)"
+                                  "\n모험섬: 19시, 21시, 23시 (2 타임)"
+                                  "\n필드 보스: 오전 11시 ~ 오후 11시 (매 정각)", value="악몽을 떠도는 유령선 - 로헨델 동쪽"
+                                               "\n그림자를 헤메는 유령선 - 페이튼 옆"
+                                               "\n폭풍을 부르는 유령선 - 파푸니카 오른쪽 아래"
+                                               "\n죄를 짊어진 유령선 - 파푸니카 동북쪽 (lv. 1415)"
+                                               "\n몽환에 잠식된 유령선 - 베른 남부 서북쪽 (lv. 1490)",
+                             inline=False)
+                em.set_footer(text="모험 섬 및 항해 일정은 게임에서 확인 부탁드립니다"
+                                   "\n봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            # 던전 별 골드 확인
+            if message.content.startswith(BOT_DUNGEON_GOLD_COMMAND):
+                em = discord.Embed(title="레이드별 골드", description=" ", color=0xf2ff00)
+                em.add_field(name="오레하 노말", value="1,100 골드", inline=True)
+                em.add_field(name="오레하 하드", value="1,300 골드", inline=True)
+                em.add_field(name="아르고스", value="1,600 골드 (700 + 400 + 500)", inline=False)
+                em.add_field(name="발탄 노말", value="2,500 골드 (Lv.1415)", inline=True)
+                em.add_field(name="발탄 하드", value="4,500 골드 (Lv.1445)", inline=True)
+                em.add_field(name="\u200b", value="\u200b", inline=True)
+                em.add_field(name="비아 노말", value="2,500 골드 (Lv.1430)", inline=True)
+                em.add_field(name="비아 하드", value="4,500 골드 (Lv.1460)", inline=True)
+                em.add_field(name="\u200b", value="\u200b", inline=True)
+                em.add_field(name="쿠크 노말", value="4,500 골드 (Lv.1475)", inline=True)
+                em.add_field(name="\u200b", value="\u200b", inline=True)
+                em.add_field(name="\u200b", value="\u200b", inline=True)
+                em.add_field(name="아브렐 노말 [1, 2 관문]", value="4,500 골드 (Lv.1490)", inline=True)
+                em.add_field(name="아브렐 노말 [3, 4 관문]", value="1,500 골드 (Lv.1500)", inline=True)
+                em.add_field(name="아브렐 노말 [5, 6 관문]", value="2,500 골드 (Lv.1520)", inline=True)
+                em.add_field(name="아브렐 하드 [1, 2 관문]", value="5,500 골드 (Lv.1540)", inline=True)
+                em.add_field(name="아브렐 하드 [3, 4 관문]", value="2,000 골드 (Lv.1550)", inline=True)
+                em.add_field(name="아브렐 하드 [5, 6 관문]", value="3,000 골드 (Lv. 1560)", inline=True)
+                em.set_footer(text="봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed=em)
+
+            # 경매 최적가
+            if message.content.startswith(BOT_AUCTION_COMMAND):
+                split_auction = message.content.split(' ')
+                if split_auction[-1].isdigit:
+                    ppl4 = int(split_auction[-1]) * 0.95 * 3 / 4
+                    ppl8 = int(split_auction[-1]) * 0.95 * 7 / 8
+
+                    em = discord.Embed(title="경매 최적가", color=0xf81212)
+                    em.add_field(name="\u200b", value="4인 최적가: " + str("{:.1f}".format(ppl4)), inline=False)
+                    em.add_field(name="\u200b", value="8인 최적가: " + str("{:.1f}".format(ppl8)), inline=False)
+                    em.add_field(name="\u200b", value="\u200b", inline=False)
+                    em.set_footer(text="봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                    await message.channel.send(embed = em)
+
+                else:
+                    em = discord.Embed(title="경매가 계산", color=0xf81212)
+                    em.add_field(name="\u200b", value="\u200b", inline=False)
+                    em.add_field(name="숫자만 입력해주세요.", value="\u200b", inline=False)
+                    await message.channel.send(embed = em)
+
+            # 장비 재료 개수
+            if message.content.startswith(BOT_EQUIP_COMMAND):
+                em = discord.Embed(title="유물 장비 제작에 필요한 재료 개수", color=0xf81212)
+                file = discord.File("../equip_material.png", filename = "equip_material.png")
+                em.set_image(url="attachment://equip_material.png")
+                em.set_footer(text="봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed = em, file = file)
+
+            # 클리어 재료 개수
+            if message.content.startswith(BOT_CLEAR_COMMAND):
+                em = discord.Embed(title="레이드별 재료 보상", color=0xf81212)
+                file = discord.File("../clear_material.png", filename="clear_material.png")
+                em.set_image(url="attachment://clear_material.png")
+                em.set_footer(text="봇에 대한 문의는 [지소]에게 말씀해주세요!")
+                await message.channel.send(embed = em, file = file)
+
+# CONFIG ON/OFF
+async def conf(sv, ch, confname):
+    try:
+        if not os.path.exists(BOT_CONFIG_DIRECTORY + '/' + str(sv.id) + '/' + str(ch.id)):
+            os.makedirs(BOT_CONFIG_DIRECTORY + '/' + str(sv.id) + '/' + str(ch.id))
+
+        if os.path.exists(BOT_CONFIG_DIRECTORY + '/' + str(sv.id) + '/' + str(ch.id) + '/' + confname + '.txt'):
+            with open(BOT_CONFIG_DIRECTORY + '/' + str(sv.id) + '/' + str(ch.id) + '/' + confname + '.txt',
+                      'r') as value:
+                if value.read() == '1':
+                    with open(BOT_CONFIG_DIRECTORY + '/' + str(sv.id) + '/' + str(ch.id) + '/' + confname + '.txt',
+                              'w') as value_off:
+                        value_off.write('0')
+                    em = discord.Embed(title="Off", description="", colour=0x555555)
+                    await ch.send(embed=em)
+                else:
+                    with open(BOT_CONFIG_DIRECTORY + '/' + str(sv.id) + '/' + str(ch.id) + '/' + confname + '.txt',
+                              'w') as value_on:
+                        value_on.write('1')
+                    em = discord.Embed(title="On", description="", colour=0x555555)
+                    await ch.send(embed=em)
+        else:
+            with open(BOT_CONFIG_DIRECTORY + '/' + str(sv.id) + '/' + str(ch.id) + '/' + confname + '.txt',
+                      'w') as value_on:
+                value_on.write('1')
+            em = discord.Embed(title="On", description="", colour=0x555555)
+            await ch.send(embed=em)
+    except:
+        await err('conf', sv)
+
+
+# 디렉토리 체크
+async def checkdir(guild):
+    try:
+        if not os.path.exists(BOT_LAST_VOICE_DATE_DIRECTORY):
+            os.makedirs(BOT_LAST_VOICE_DATE_DIRECTORY)
+        if not os.path.exists(BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(guild.id)):
+            os.makedirs(BOT_LAST_VOICE_DATE_DIRECTORY + '/' + str(guild.id))
+        if not os.path.exists(BOT_KEYWORD_DIRECTORY):
+            os.makedirs(BOT_KEYWORD_DIRECTORY)
+        if not os.path.exists(BOT_KEYWORD_DIRECTORY + '/' + str(guild.id)):
+            os.makedirs(BOT_KEYWORD_DIRECTORY + '/' + str(guild.id))
+        if not os.path.exists(BOT_CONFIG_DIRECTORY):
+            os.makedirs(BOT_CONFIG_DIRECTORY)
+        if not os.path.exists(BOT_CONFIG_DIRECTORY + '/' + str(guild.id)):
+            os.makedirs(BOT_CONFIG_DIRECTORY + '/' + str(guild.id))
+    except:
+        await err('checkdir', server)
+
+
+# 에러 체크
+async def err(errmsg, server):
+    print('\n' + errmsg + ' : ' + str(datetime.datetime.now()) + ' / ' + str(server.id))
+    with open(os.getcwd() + '/err_logs.txt', 'a') as err_log:
+        err_log.write(str(errmsg) + ' : ' + str(datetime.datetime.now()) + ' / ' + str(server.id) + '\n')
+
+# 실행
+client.run('Bot_ID_NUM')  # 테스트 봇
