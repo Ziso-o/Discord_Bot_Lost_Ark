@@ -24,3 +24,19 @@ There is only one developer of Mokoko bot but some of codes were help by other p
 입니다.
 
 추가적으로, 각 분기별 이벤트 정보와 보상을 주기적으로 업데이트 했었고, 기재되지 않은 기능도 있었습니다만, 실용적인 면이 떨어져 제거했습니다.
+
+
+## Screenshots
+
+
+#### 경매 최적가
+![image](https://user-images.githubusercontent.com/113956954/192092909-32979485-2369-46ce-b773-c9bc82d821b7.png)
+
+#### 명령어 입력 시간 출력과 데일리 이벤트 출력
+![image](https://user-images.githubusercontent.com/113956954/192092861-d685487c-4a78-446e-a190-8f69e20314a5.png)
+
+#### 각 레이드별 재화 보상 정보
+![image](https://user-images.githubusercontent.com/113956954/192092884-1a3cfddf-4144-4119-bd49-481552e89acb.png)
+
+
+
